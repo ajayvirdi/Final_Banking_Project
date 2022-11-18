@@ -21,20 +21,20 @@ public class Final_Banking_Projects {
     public static void main(String[] args)
     {   
         System.out.println("*****************************************************");
-        System.out.println("Banking System- Final Project:");
+        System.out.println("Banking System- Term Project:");
         System.out.println("*****************************************************");
         createCSV();
         List<List<String>> records = readCSV();
 //        System.out.println(records);
-        System.out.println("Enter your choice:\n1.Aleardy User\n2.Create New Account");
+        System.out.println("Enter your choice:\n1.Login\n2.Create New Account");
         Scanner choiceobj = new Scanner(System.in);
         int choice = choiceobj.nextInt();
         System.out.println("------------------------------------------------------");
         if(choice == 1){
-            System.out.println("Enter your username");
+            System.out.println("Enter username");
             Scanner userobj = new Scanner(System.in);
             String username = userobj.nextLine();
-            System.out.println("Enter your Password");
+            System.out.println("Enter Password");
             Scanner passobj = new Scanner(System.in);
             String password = passobj.nextLine();
             System.out.println("------------------------------------------------------");
@@ -45,19 +45,21 @@ public class Final_Banking_Projects {
             System.out.println("Enter your Name");
             Scanner nameobj = new Scanner(System.in);
             String name = nameobj.nextLine();
-            System.out.println("Enter your Password");
+            System.out.println("Enter Password");
             Scanner passobj = new Scanner(System.in);
             String pass = passobj.nextLine();
             System.out.println("Enter Account Type");
             Scanner accTypObj = new Scanner(System.in);
             String accTyp = accTypObj.nextLine();
             String accBalance = "0";
-            int backNumber = 0;
+            String backNumber = "";
             for(int i=0;i<5;i++){
-                double random = Math.random() * 9;
-                backNumber = backNumber + (int)random;
+                int random = (int)(Math.random() * 9);
+                backNumber = backNumber + String.valueOf(random);
+                System.out.println(backNumber);
             }
-            String username = name.substring(0,4) + String.valueOf(backNumber);
+            
+            String username = name.substring(0,4) + backNumber;
             String accNumber = "";
             for(int i=0;i<9;i++){
                 double random = Math.random() * 9;
@@ -150,7 +152,7 @@ public class Final_Banking_Projects {
             }
         }
         if(temp==0){
-            System.out.println("Username does not exists");
+            System.out.println("Username does not exist");
             System.exit(0);
         }
         else{
@@ -221,10 +223,10 @@ public class Final_Banking_Projects {
     }
     public static void transactionOptions(String username)
     {
-        
+        System.out.println("------------------------------------------------------");
         Scanner in = new Scanner(System.in);
-        System.out.println("1. Make a Deposit \n2. Withdraw money \n3. Transfer money to a friend");
-        System.out.println("4. Transfer between accounts \n5. Display current balance \n6. Pay to a merchant \n0. Logout");
+        System.out.println("1. Make a Deposit \n2. Withdraw money \n3. Transfer money to a different bank");
+        System.out.println("4. Transfer money to someone in the same bank \n5. Display current balance \n6. Pay to a merchant \n0. Logout");
         System.out.print("Enter your choice: ");
         int choice = in.nextInt();
         switch(choice) {
@@ -253,7 +255,7 @@ public class Final_Banking_Projects {
 
     public static void deposit(String username)
     {
-        System.out.println("deposit ammount :");
+        System.out.println("Deposit ammount :");
         Scanner depositobj = new Scanner(System.in);
         double depositAmount = depositobj.nextInt();
         List<List<String>> records = readCSV();
@@ -275,7 +277,7 @@ public class Final_Banking_Projects {
     }
     public static void withdraw(String username)
     {
-        System.out.println("withdraw ammount :");
+        System.out.println("Withdraw ammount :");
         Scanner depositobj = new Scanner(System.in);
         double depositAmount = depositobj.nextInt();
         List<List<String>> records = readCSV();
@@ -285,6 +287,10 @@ public class Final_Banking_Projects {
             String user_exists = array[0];
             double amount_exists = Double.parseDouble(array[5]);
             if(username.equals(user_exists)){
+                if(amount_exists - depositAmount < 0){
+                    System.out.println("Insufficient Balance");
+                    transactionOptions(username);
+                }
                 amount_exists = amount_exists - depositAmount;
                 array[5] = String.valueOf(amount_exists);
                 record.set(5, array[5]);
@@ -309,6 +315,10 @@ public class Final_Banking_Projects {
             String user_exists = array[0];
             double amount_exists = Double.parseDouble(array[5]);
             if(username.equals(user_exists)){
+                if(amount_exists - transferAmount < 0){
+                    System.out.println("Insufficient Balance");
+                    transactionOptions(username);
+                }
                 amount_exists = amount_exists - transferAmount;
                 array[5] = String.valueOf(amount_exists);
                 record.set(5, array[5]);
@@ -316,7 +326,7 @@ public class Final_Banking_Projects {
                 writeCSV(record,i);
                 i++;
         }
-        System.out.println("Transfer Successfull to account no. "+Account);
+        System.out.println("Transfer Successful to account no. "+Account);
         transactionOptions(username);
     }
     public static void internalTransfer(String username)
@@ -326,7 +336,7 @@ public class Final_Banking_Projects {
         String Account = accobj.nextLine();
         int temp = validateAccount(Account);
         if(temp == 0){
-            System.out.println("This Account is not in ouur bank");
+            System.out.println("This Account is not in our bank");
             transactionOptions(username);
         }
         System.out.println("Transfer ammount :");
@@ -340,6 +350,10 @@ public class Final_Banking_Projects {
             String Account_exists = array[3];
             double amount_exists = Double.parseDouble(array[5]);
             if(username.equals(user_exists)){
+                if(amount_exists - transferAmount < 0){
+                    System.out.println("Insufficient Balance");
+                    transactionOptions(username);
+                }
                 amount_exists = amount_exists - transferAmount;
                 array[5] = String.valueOf(amount_exists);
                 record.set(5, array[5]);
@@ -353,7 +367,7 @@ public class Final_Banking_Projects {
                 i++;
         }
         
-        System.out.println("Transfer Successfull to account no. "+Account);
+        System.out.println("Transfer Successful to account no. "+Account);
         transactionOptions(username);
     }
     public static void displayBalance(String username)
@@ -372,7 +386,52 @@ public class Final_Banking_Projects {
     }
     public static void payMerchant(String username)
     {
+        System.out.println("1.Hydro\n2.Water & Heat\n3.Rent\n4.Telecom Bill\n5.Grocery");
+        Scanner merchantobj = new Scanner(System.in);
+        double merchantNo = merchantobj.nextInt();
+        String merchantName = "";
+        if(merchantNo == 1){
+            merchantName = "Hydro";
+        }
+        if(merchantNo == 2){
+            merchantName = "Water & Heat";
+        }
+        if(merchantNo == 3){
+            merchantName = "Rent";
+        }
+        if(merchantNo == 4){
+            merchantName = "Telecom Bill";
+        }
+        if(merchantNo == 5){
+            merchantName = "Grocery";
+        }
+        else{
+            System.out.println("Enter a valid choice");
+            payMerchant(username);
+        }
+        System.out.println("Amount :");
+        Scanner depositobj = new Scanner(System.in);
+        double depositAmount = depositobj.nextInt();
         List<List<String>> records = readCSV();
+        int i = 0;
+        for(List<String> record : records){
+            String[] array = record.toArray(new String[record.size()]);
+            String user_exists = array[0];
+            double amount_exists = Double.parseDouble(array[5]);
+            if(username.equals(user_exists)){
+                if(amount_exists - depositAmount < 0){
+                    System.out.println("Insufficient Balance");
+                    transactionOptions(username);
+                }
+                amount_exists = amount_exists - depositAmount;
+                array[5] = String.valueOf(amount_exists);
+                record.set(5, array[5]);
+            }
+                writeCSV(record,i);
+                i++;
+        }
+        System.out.println("Successfully Paid "+depositAmount +"to "+ merchantName);
+        transactionOptions(username);
     }
     
 }
